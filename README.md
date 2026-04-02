@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/icon.ico" width="88" height="88" alt="Steam Guide Downloader">
+<img src="assets/original.png" width="88" height="88" alt="Steam Guide Downloader">
 
 # Steam Guide Downloader
 
