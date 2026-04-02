@@ -10,7 +10,7 @@
 [![GUI](https://img.shields.io/badge/GUI-PyQt6-41CD52?logo=qt&logoColor=white)](https://pypi.org/project/PyQt6/)
 [![License](https://img.shields.io/github/license/AlexAgents/steam-guide-downloader?color=yellow)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey)](https://github.com/AlexAgents/steam-guide-downloader)
-[![VirusTotal](https://img.shields.io/badge/VirusTotal-check_manually-brightgreen)](https://github.com/AlexAgents/steam-guide-downloader/releases/latest)
+[![VirusTotal](https://img.shields.io/badge/VirusTotal-v2.2.0-brightgreen)](https://www.virustotal.com/gui/file/402b81bcd0c6168370d8e91286260e44fffc5b53928131ead01c09df5e1c7da6)
 
 [![English](https://img.shields.io/badge/Read_in-English-blue?logo=readme&logoColor=white)](README.md)
 
@@ -199,14 +199,6 @@ powershell -ExecutionPolicy Bypass -File scripts\clean.ps1
 ## 📖 Steam Guides
 
 - 🇷🇺 [Руководство в Steam (Русский)](https://steamcommunity.com/sharedfiles/filedetails/?id=3668303547)
-
-## 📝 Лицензия
-
-Проект распространяется по лицензии **MIT** — см. [LICENSE](LICENSE).
-
-## 👤 Автор
-
-**AlexAgents** — [GitHub](https://github.com/AlexAgents/steam-guide-downloader)
 
 ---
 
