@@ -1,44 +1,35 @@
 @echo off
-echo === Steam Guide Saver — Cleanup ===
-echo.
+
+REM Cleanup script for Windows (cmd)
+
+echo ═══════════════════════════════════════════
+echo   Steam Guide Downloader — Cleanup
+echo ═══════════════════════════════════════════
 
 cd /d "%~dp0\.."
 
-if exist build (
-    rmdir /s /q build
-    echo   Deleted: build/
-) else (
-    echo   Skip:    build/
+echo.
+echo [1/5] Removing build/ ...
+if exist "build" rd /s /q "build"
+
+echo [2/5] Removing dist/ ...
+if exist "dist" rd /s /q "dist"
+
+echo [3/5] Removing __pycache__ ...
+for /d /r %%d in (__pycache__) do (
+    if exist "%%d" rd /s /q "%%d"
 )
 
-if exist __pycache__ (
-    rmdir /s /q __pycache__
-    echo   Deleted: __pycache__/
-) else (
-    echo   Skip:    __pycache__/
+echo [4/5] Removing .pytest_cache ...
+for /d /r %%d in (.pytest_cache) do (
+    if exist "%%d" rd /s /q "%%d"
 )
 
-if exist dist (
-    rmdir /s /q dist
-    echo   Deleted: dist/
-) else (
-    echo   Skip:    dist/
-)
-
-if exist SteamGuideSaver.spec (
-    del SteamGuideSaver.spec
-    echo   Deleted: SteamGuideSaver.spec
-) else (
-    echo   Skip:    SteamGuideSaver.spec
-)
-
-if exist downloader.log (
-    del downloader.log
-    echo   Deleted: downloader.log
-) else (
-    echo   Skip:    downloader.log
-)
+echo [5/5] Removing *.spec files ...
+del /q "*.spec" 2>nul
+del /q "build\*.spec" 2>nul
 
 echo.
-echo === Done! ===
+echo   Cleanup complete.
+echo ═══════════════════════════════════════════
 pause

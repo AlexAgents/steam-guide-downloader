@@ -1,48 +1,52 @@
-# ============================================
-# Steam Guide Saver — Cleanup
-# Запуск: правый клик → "Выполнить с помощью PowerShell"
-# Или: powershell -ExecutionPolicy Bypass -File scripts\clean.ps1
-# ============================================
+# Cleanup script for Windows (PowerShell)
 
-# ============================================
-# Steam Guide Saver - Cleanup
-# Launch: Right-click → "Run with PowerShell"
-# Or: powershell -ExecutionPolicy Bypass -File scripts\clean.ps1
-# ===========================================
+$ErrorActionPreference = "SilentlyContinue"
+$root = Split-Path -Parent $PSScriptRoot
 
-# Переходим в корень проекта (на уровень выше scripts/)
-# Go to the root of the project (one level above scripts/)
-Set-Location -Path (Split-Path -Parent $PSScriptRoot)
-
-Write-Host "=== Steam Guide Saver — Cleanup ===" -ForegroundColor Cyan
-Write-Host "Working dir: $(Get-Location)" -ForegroundColor Gray
+Write-Host ""
+Write-Host "═══════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "  Steam Guide Downloader — Cleanup" -ForegroundColor Cyan
+Write-Host "═══════════════════════════════════════════" -ForegroundColor Cyan
 Write-Host ""
 
-$folders = @("build", "__pycache__", "dist")
-
-foreach ($folder in $folders) {
-    if (Test-Path $folder) {
-        Remove-Item -Recurse -Force $folder
-        Write-Host "  Deleted: $folder/" -ForegroundColor Green
-    } else {
-        Write-Host "  Skip:    $folder/" -ForegroundColor Gray
+$dirs = @("build", "dist")
+foreach ($d in $dirs) {
+    $p = Join-Path $root $d
+    if (Test-Path $p) {
+        Remove-Item -Recurse -Force $p
+        Write-Host "  Removed: $d/" -ForegroundColor Yellow
     }
 }
 
-$files = @("*.spec", "downloader.log")
+# __pycache__
+Get-ChildItem -Path $root -Recurse -Directory -Filter "__pycache__" |
+    ForEach-Object {
+        Remove-Item -Recurse -Force $_.FullName
+        Write-Host "  Removed: $($_.FullName -replace [regex]::Escape($root), '.')" -ForegroundColor DarkGray
+    }
 
-foreach ($pattern in $files) {
-    $found = Get-ChildItem -Path . -Filter $pattern -ErrorAction SilentlyContinue
-    foreach ($file in $found) {
-        Remove-Item -Force $file.FullName
-        Write-Host "  Deleted: $($file.Name)" -ForegroundColor Green
+# .pytest_cache
+Get-ChildItem -Path $root -Recurse -Directory -Filter ".pytest_cache" |
+    ForEach-Object {
+        Remove-Item -Recurse -Force $_.FullName
+        Write-Host "  Removed: $($_.FullName -replace [regex]::Escape($root), '.')" -ForegroundColor DarkGray
     }
-    if (-not $found) {
-        Write-Host "  Skip:    $pattern" -ForegroundColor Gray
+
+# .spec files
+Get-ChildItem -Path $root -Filter "*.spec" -File |
+    ForEach-Object {
+        Remove-Item -Force $_.FullName
+        Write-Host "  Removed: $($_.Name)" -ForegroundColor DarkGray
     }
-}
+
+# Generated checkbox PNGs
+Get-ChildItem -Path (Join-Path $root "assets") -Filter "chk_*.png" -File -ErrorAction SilentlyContinue |
+    ForEach-Object {
+        Remove-Item -Force $_.FullName
+        Write-Host "  Removed: assets/$($_.Name)" -ForegroundColor DarkGray
+    }
 
 Write-Host ""
-Write-Host "=== Done! ===" -ForegroundColor Cyan
+Write-Host "  Cleanup complete." -ForegroundColor Green
+Write-Host "═══════════════════════════════════════════" -ForegroundColor Cyan
 Write-Host ""
-Read-Host "Press Enter to close"

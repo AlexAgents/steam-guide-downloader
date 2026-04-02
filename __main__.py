@@ -1,43 +1,42 @@
-"""
-Steam Guide Saver — точка входа/entry point
-"""
+# Steam Guide Downloader
+# Copyright (c) 2025-2026 AlexAgents
+# Licensed under the MIT License. See LICENSE file in the project root.
 
+"""
+Steam Guide Saver — entry point
+"""
 import sys
 import os
 import logging
+from logging.handlers import RotatingFileHandler
 
-from paths import get_log_path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# Логирование
+from app.paths import get_log_path
+
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
     handlers=[
-        logging.FileHandler(get_log_path(), encoding="utf-8"),
+        RotatingFileHandler(
+            get_log_path(), encoding="utf-8",
+            maxBytes=5 * 1024 * 1024, backupCount=3
+        ),
         logging.StreamHandler(sys.stdout)
     ]
 )
+
 logger = logging.getLogger(__name__)
 
 
 def main():
     try:
         from PyQt6.QtWidgets import QApplication
-        from gui import MainWindow
-        from icon_provider import setup_app_icon
-        from about import APP_NAME, APP_VERSION
+        from app.gui.main_window import MainWindow
+        from app.gui.icon_provider import setup_app_icon
+        from app import APP_NAME, APP_VERSION
 
-        logger.info(f"Запуск {APP_NAME} v{APP_VERSION}")
-
-        # Windows: AppUserModelID (до QApplication)
-        if sys.platform == 'win32':
-            try:
-                import ctypes
-                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-                    "steamguidesaver.classic.v2"
-                )
-            except Exception:
-                pass
+        logger.info(f"Starting {APP_NAME} v{APP_VERSION}")
 
         app = QApplication(sys.argv)
         app.setStyle("Fusion")
@@ -51,13 +50,12 @@ def main():
         sys.exit(app.exec())
 
     except ImportError as e:
-        logger.critical(f"Зависимость: {e}")
+        logger.critical(f"Missing dependency: {e}")
         print(f"\n{e}")
-        print("pip install PyQt6 requests beautifulsoup4 python-docx Pillow")
+        print("pip install -r requirements.txt")
         sys.exit(1)
-
     except Exception as e:
-        logger.critical(f"Ошибка: {e}", exc_info=True)
+        logger.critical(f"Fatal error: {e}", exc_info=True)
         sys.exit(1)
 
 

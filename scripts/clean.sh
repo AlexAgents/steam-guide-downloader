@@ -1,33 +1,38 @@
-#!/bin/bash
-# ============================================
-# Steam Guide Saver — Cleanup
-# Запуск: chmod +x scripts/clean.sh && ./scripts/clean.sh
-# ============================================
+# Cleanup script for Linux / macOS
 
-# Переходим в корень проекта
-cd "$(dirname "$0")/.."
+set -e
 
-echo "=== Steam Guide Saver — Cleanup ==="
-echo "Working dir: $(pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(dirname "$SCRIPT_DIR")"
+
+echo ""
+echo "═══════════════════════════════════════════"
+echo "  Steam Guide Downloader — Cleanup"
+echo "═══════════════════════════════════════════"
 echo ""
 
-for dir in build __pycache__ dist; do
-    if [ -d "$dir" ]; then
-        rm -rf "$dir"
-        echo "  Deleted: $dir/"
-    else
-        echo "  Skip:    $dir/"
+cd "$ROOT"
+
+for d in build dist; do
+    if [ -d "$d" ]; then
+        rm -rf "$d"
+        echo "  Removed: $d/"
     fi
 done
 
-for file in *.spec downloader.log; do
-    if [ -f "$file" ]; then
-        rm -f "$file"
-        echo "  Deleted: $file"
-    else
-        echo "  Skip:    $file"
-    fi
-done
+find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+echo "  Removed: __pycache__ dirs"
+
+find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
+echo "  Removed: .pytest_cache dirs"
+
+find . -maxdepth 1 -name "*.spec" -delete 2>/dev/null || true
+echo "  Removed: *.spec files"
+
+find assets -name "chk_*.png" -delete 2>/dev/null || true
+echo "  Removed: generated checkbox PNGs"
 
 echo ""
-echo "=== Done! ==="
+echo "  Cleanup complete."
+echo "═══════════════════════════════════════════"
+echo ""

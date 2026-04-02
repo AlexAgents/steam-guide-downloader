@@ -1,4 +1,8 @@
-"""Вспомогательные функции"""
+# Steam Guide Downloader
+# Copyright (c) 2025-2026 AlexAgents
+# Licensed under the MIT License. See LICENSE file in the project root.
+
+"""Utility functions"""
 
 import re
 import os
@@ -23,10 +27,6 @@ def clean_filename(title: str) -> str:
 
 
 def validate_save_path(path: str) -> tuple[bool, str]:
-    """
-    Валидация пути сохранения.
-    Returns: (is_valid, error_message_or_normalized_path)
-    """
     if not path or not path.strip():
         return False, "Path is empty"
 
@@ -35,13 +35,11 @@ def validate_save_path(path: str) -> tuple[bool, str]:
     path = os.path.expandvars(path)
     path = os.path.normpath(path)
 
-    # Проверка на запрещённые символы (Windows)
     if os.name == 'nt':
         invalid_chars = re.findall(r'[*?"<>|]', path)
         if invalid_chars:
-            return False, f"Invalid characters in path: {''.join(set(invalid_chars))}"
+            return False, f"Invalid characters: {''.join(set(invalid_chars))}"
 
-    # Если папка существует — проверяем права записи
     if os.path.exists(path):
         if not os.path.isdir(path):
             return False, "Path is not a directory"
@@ -49,7 +47,6 @@ def validate_save_path(path: str) -> tuple[bool, str]:
             return False, "Directory is not writable"
         return True, path
 
-    # Если не существует — пробуем создать
     try:
         os.makedirs(path, exist_ok=True)
         return True, path
@@ -69,7 +66,7 @@ def add_horizontal_line(paragraph):
         pBdr.append(bottom)
         pPr.append(pBdr)
     except Exception as e:
-        logger.warning(f"Ошибка горизонтальной линии: {e}")
+        logger.warning(f"Horizontal line error: {e}")
 
 
 def add_hyperlink(paragraph, url, text, color=None, underline=True):
@@ -86,26 +83,38 @@ def add_hyperlink(paragraph, url, text, color=None, underline=True):
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
             is_external=True
         )
+
         hyperlink = OxmlElement('w:hyperlink')
         hyperlink.set(qn('r:id'), r_id)
+
         new_run = OxmlElement('w:r')
         rPr = OxmlElement('w:rPr')
+
         if color:
             c_elem = OxmlElement('w:color')
-            c_elem.set(qn('w:val'), color.rgb if hasattr(color, 'rgb') else "0563C1")
+            if isinstance(color, RGBColor):
+                color_str = str(color)
+            elif hasattr(color, 'rgb'):
+                color_str = str(color.rgb)
+            else:
+                color_str = "0563C1"
+            c_elem.set(qn('w:val'), color_str)
             rPr.append(c_elem)
+
         if underline:
             u = OxmlElement('w:u')
             u.set(qn('w:val'), 'single')
             rPr.append(u)
+
         new_run.append(rPr)
         new_run.text = text
         hyperlink.append(new_run)
         paragraph._p.append(hyperlink)
         return hyperlink
+
     except Exception as e:
-        logger.warning(f"Ошибка гиперссылки '{url}': {e}")
+        logger.warning(f"Hyperlink error '{url}': {e}")
         run = paragraph.add_run(text)
-        if color:
+        if color and isinstance(color, RGBColor):
             run.font.color.rgb = color
         return run

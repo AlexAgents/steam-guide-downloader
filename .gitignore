@@ -1,31 +1,67 @@
-# === Python ===
+# ─── Python ───
 __pycache__/
 *.py[cod]
 *$py.class
-*.pyo
-*.egg-info/
+*.so
 *.egg
+*.egg-info/
 dist/
 build/
 *.spec
+*.manifest
+*.pyd
+*.pyo
+.mypy_cache/
+.ruff_cache/
 
-# === IDE ===
-.vscode/
+# ─── Virtual environments ───
+venv/
+.venv/
+env/
+.env/
+
+# ─── IDE / Editor ───
 .idea/
+.vscode/
 *.swp
 *.swo
 *~
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
 
-# === Utils ===
-_make_icon.py
-_make_banner.py
-
-# === APPS ===
-settings.json
-downloader.log
-Steam_Manuals/
-
-# === OS ===
+# ─── OS ───
 .DS_Store
 Thumbs.db
-desktop.ini
+Desktop.ini
+ehthumbs.db
+
+# ─── App runtime data ───
+.cfg/
+Steam_Manuals/
+*.docx
+*.pdf
+assets/chk_*.png
+
+# ─── Logs ───
+*.log
+
+# ─── Generated assets ───
+assets/chk_off_*.png
+assets/chk_on_*.png
+
+# ─── Distribution / Build ───
+dist/
+build/
+*.exe
+checksums.txt
+
+# ─── Pytest ───
+.pytest_cache/
+htmlcov/
+.coverage
+
+# ─── Temp ───
+tmp/
+temp/
